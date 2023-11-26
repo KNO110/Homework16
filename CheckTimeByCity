@@ -1,0 +1,70 @@
+///Powered by Ak1ne
+
+
+using System;
+using System.Windows.Forms;
+
+
+/////Если хотите посмотреть время по городу то вводим регион (ex: Europe/...name of city) Например Europe/Kiev или Europe/Berlin. И да, тут киев в старом варианте правописания
+
+namespace WorldClockApp
+{
+    public partial class MainForm : Form
+    {
+        private TextBox cityTextBox;
+        private Label timeLabel;
+
+        public MainForm()
+        {
+            cityTextBox = new TextBox();
+            cityTextBox.Size = new System.Drawing.Size(200, 25);
+            cityTextBox.Location = new System.Drawing.Point(50, 50);
+
+            timeLabel = new Label();
+            timeLabel.Size = new System.Drawing.Size(300, 25);
+            timeLabel.Location = new System.Drawing.Point(50, 80);
+
+            cityTextBox.TextChanged += City_Txt_change;
+
+            Controls.Add(cityTextBox);
+            Controls.Add(timeLabel);
+        }
+
+        private void City_Txt_change(object sender, EventArgs e)
+        {
+            UpdateTime();
+        }
+
+        private void UpdateTime()
+        {
+            string cityName = cityTextBox.Text;
+
+            try
+            {
+                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(cityName);
+
+                DateTime currentTime = TimeZoneInfo.ConvertTime(DateTime.Now, timeZone);
+
+                timeLabel.Text = $"Текущее время в {cityName}: {currentTime.ToString("HH:mm:ss")}";
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                timeLabel.Text = "Ошибка: Временная зона не найдена(((";
+            }
+            catch (InvalidTimeZoneException)
+            {
+                timeLabel.Text = "Ошибка: Ну, чёта не правильно";
+            }
+        }
+
+        public static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            Application.Run(new MainForm());
+        }
+    }
+}
+
+///Powered by Ak1ne
